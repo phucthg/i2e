@@ -1,2 +1,2 @@
 # i2e
-Convert image to set of equations through edge detection and linear interpolation
+Convert image to set of equations through edge detection and optimize curve fiting
