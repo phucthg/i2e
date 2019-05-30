@@ -1,12 +1,7 @@
 import cv2;
 import numpy as np;
 import sys;
-import matplotlib.pyplot as plt;
-import pandas as pd;
-import scipy.interpolate;
 from scipy import optimize;
-from scipy.interpolate import UnivariateSpline;
-from scipy.interpolate import LSQUnivariateSpline;
 global file, rx, ry;
 moves=[(1, -1), (1, 0), (1, 1)];
 def CED(gray, low=600, high=800):
