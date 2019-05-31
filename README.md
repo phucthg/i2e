@@ -1,6 +1,6 @@
 # i2e
 Convert image to set of equations through edge detection and optimize curve fiting.
-
+View this file in raw format to see the line breaks.
 Usage:
 python i2e.py IMAGE
 or
