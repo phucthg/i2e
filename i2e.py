@@ -4,7 +4,7 @@ import sys;
 from scipy import optimize;
 global file, rx, ry;
 moves=[(1, -1), (1, 0), (1, 1)];
-def CED(gray, low=600, high=800):
+def CED(gray, low, high):
 	return cv2.Canny(gray, low, high);
 def linear_fit(x:float, a:float, b:float):
 	return a*x+b;
@@ -30,7 +30,7 @@ def output_poly(f, left, right, x, y):
 	usable+="-("+x+"-"+str(left)+")^{0.5}";
 	file.write(usable);
 	file.write("\n");
-def ITP(edges, cut_off=100):
+def ITP(edges, mindatax, mindatay):
 	height=edges.shape[0];
 	width=edges.shape[1];
 	done=np.zeros(edges.shape);
@@ -74,6 +74,8 @@ def ITP(edges, cut_off=100):
 			ax=np.array(rx);
 			ay=np.array(ry);
 			if(len(ax)==1):
+				continue;
+			if(len(ax)<mindatax):
 				continue;
 			temp=None;
 			if(len(ax)==2):
@@ -127,6 +129,8 @@ def ITP(edges, cut_off=100):
 			ay=np.array(ry);
 			if(len(ax)==1):
 				continue;
+			if(len(ax)<mindatay):
+				continue;
 			temp=None;
 			if(len(ax)==2):
 				temp=optimize.curve_fit(linear_fit, ax, ay);
@@ -138,21 +142,37 @@ def ITP(edges, cut_off=100):
 				temp=optimize.curve_fit(quardatic_fit, ax, ay);
 			output_poly(temp[0], ax[0], ax[len(ax)-1], 'y', 'x');
 def main(args):
+	if((len(args) in [1, 3, 4, 5]) == False):
+		print("Wrong number of arguments!");
+		return;
 	global file;
 	id=args[0];
 	low=None;
 	high=None;
-	if(len(args)==3):
+	mindatax=None;
+	mindatay=None;
+	if(len(args)==5):
 		low=int(args[1]);
 		high=int(args[2]);
+		mindatax=int(args[3]);
+		mindatay=int(args[4]);
+	elif(len(args)==4):
+		low=int(args[1]);
+		high=int(args[2]);
+		mindatax=mindatay=int(args[3]);
+	elif(len(args)==3):
+		low=int(args[1]);
+		high=int(args[2]);
+		mindatax=mindatay=1;
 	else:
 		low=400;
 		high=600;
+		mindatax=mindatay=1;
 	image=cv2.imread(id, cv2.IMREAD_GRAYSCALE);
 	edges=CED(image, low, high);
 	cv2.imshow('images', edges);
 	file=open("output.txt", "w+");
-	ITP(edges);
+	ITP(edges, mindatax, mindatay);
 	file.flush();
 	file.close();
 	cv2.waitKey(0);
